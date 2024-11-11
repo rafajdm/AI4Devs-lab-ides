@@ -30,8 +30,31 @@ const AddCandidateForm: React.FC = () => {
     }),
     onSubmit: async (values) => {
       try {
-        // Aquí puedes agregar la lógica para enviar los datos al backend
-        console.log(values);
+        const token = localStorage.getItem('token');
+        const formData = new FormData();
+        formData.append('firstName', values.firstName);
+        formData.append('lastName', values.lastName);
+        formData.append('email', values.email);
+        formData.append('phone', values.phone);
+        formData.append('address', values.address);
+        formData.append('education', values.education);
+        formData.append('experience', values.experience);
+        if (values.resume) {
+          formData.append('resume', values.resume);
+        }
+
+        const response = await fetch('http://localhost:3010/api/candidates', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to submit the form');
+        }
+
         setIsSubmitted(true);
         setError(null);
       } catch (err) {
